@@ -1,5 +1,5 @@
 ''' Demonstrates how to subscribe to and handle data from gaze and event streams '''
-# mmm sexy
+
 import time
 
 import adhawkapi
