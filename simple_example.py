@@ -67,8 +67,6 @@ class Frontend:
         if self._last_console_print and timestamp < self._last_console_print + 1:
             return
 
-#hibah change
-
 
         if self._allow_output:
             self._last_console_print = timestamp
