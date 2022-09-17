@@ -6,6 +6,15 @@ import adhawkapi
 import adhawkapi.frontend
 from adhawkapi import Events, MarkerSequenceMode, PacketType
 
+BlinkCount = 0
+SaccadeCount = 0
+TimeStarted = 0
+TimeNow = 0
+VergenceCount = 0
+#ZoneOutCount = 0
+#ReadingSpeed = 0
+#LinesCount = 0
+#LineSpeed = 0
 
 class Frontend:
 
@@ -70,12 +79,15 @@ class Frontend:
 
         if self._allow_output:
             self._last_console_print = timestamp
-            print(f'Gaze data\n'
-                  f'Time since connection:\t{timestamp}\n'
-                  f'X coordinate:\t\t{x_pos}\n'
-                  f'Y coordinate:\t\t{y_pos}\n'
-                  f'Z coordinate:\t\t{z_pos}\n'
-                  f'Vergence angle:\t\t{vergence}\n')
+            print(f'BlinkCount:\t\t{BlinkCount}\n'
+            f'BlinkCount:\t\t{SaccadeCount}\n')
+           ## print(f'Gaze data\n'
+                 ## f'Time since connection:\t{timestamp}\n'
+                 ## f'X coordinate:\t\t{x_pos}\n'
+                 ##f'Y coordinate:\t\t{y_pos}\n'
+                 ## f'Z coordinate:\t\t{z_pos}\n'
+                  ##f'Vergence angle:\t\t{vergence}\n'
+                  ##)
 
     def _handle_event_stream(self, event_type, _timestamp, *_args):
         ''' Prints event data to the console '''
@@ -83,9 +95,11 @@ class Frontend:
 
             # We discriminate between events based on their type
             if event_type == Events.BLINK.value:
-                print('Blink!')
+                BlinkCount += 1
+                #print('Blink!')
             elif event_type == Events.SACCADE.value:
-                print('Saccade!')
+                SaccadeCount += 1
+                #print('Saccade!')
 
     def _handle_connect_response(self, error):
         ''' Handler for backend connections '''
