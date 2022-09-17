@@ -6,15 +6,19 @@ import adhawkapi
 import adhawkapi.frontend
 from adhawkapi import Events, MarkerSequenceMode, PacketType
 
-BlinkCount = 0
-SaccadeCount = 0
-TimeStarted = 0
-TimeNow = 0
-VergenceCount = 0
-#ZoneOutCount = 0
-#ReadingSpeed = 0
-#LinesCount = 0
-#LineSpeed = 0
+class Info:
+    def __init__(self):
+        self.BlinkCount = 0
+        self.SaccadeCount = 0
+        self.TimeStartedBool = False
+        self.TimeStarted = 0
+        self.TimeNow = 0
+        self.VergenceCount = 0
+        self.ZoneOutCount = 0
+        self.ReadingSpeed = 0
+        self.LinesCount = 0
+        self.LineSpeed = 0
+
 
 class Frontend:
 
@@ -23,6 +27,8 @@ class Frontend:
     def __init__(self):
         # Instantiate an API object
         self._api = adhawkapi.frontend.FrontendApi()
+
+        self.info = Info()
 
         # Tell the api that we wish to tap into the GAZE data stream
         # with self._handle_gaze_data_stream as the handler
@@ -79,8 +85,15 @@ class Frontend:
 
         if self._allow_output:
             self._last_console_print = timestamp
-            print(f'BlinkCount:\t\t{BlinkCount}\n'
-            f'BlinkCount:\t\t{SaccadeCount}\n')
+            if (self.info.TimeStartedBool == False):
+                self.info.TimeStarted = timestamp
+                self.info.TimeStartedBool = True
+            print(f'BlinkCount:\t\t{self.info.BlinkCount}\n'
+           f'SaccadeCount:\t\t{self.info.SaccadeCount}\n'
+           #f'Start Time:\t{self.info.TimeStarted}\n'
+           #f'Current Time:\t{timestamp}\n'
+           f'Time passed:\t{timestamp - self.info.TimeStarted }\n')
+           # )
            ## print(f'Gaze data\n'
                  ## f'Time since connection:\t{timestamp}\n'
                  ## f'X coordinate:\t\t{x_pos}\n'
@@ -95,11 +108,11 @@ class Frontend:
 
             # We discriminate between events based on their type
             if event_type == Events.BLINK.value:
-                BlinkCount += 1
-                #print('Blink!')
+                self.info.BlinkCount += 1
+                print('Blink!')
             elif event_type == Events.SACCADE.value:
-                SaccadeCount += 1
-                #print('Saccade!')
+                self.info.SaccadeCount += 1
+                print('Saccade!')
 
     def _handle_connect_response(self, error):
         ''' Handler for backend connections '''
