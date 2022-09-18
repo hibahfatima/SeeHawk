@@ -97,7 +97,7 @@ class Frontend:
             if (self.info.prevX > x_pos + 0.015):
                 self.info.LinesCount += 1
             self.info.prevX = x_pos
-            if (timestamp - self.info.TimeStarted < 10):
+            if (timestamp - self.info.TimeStarted < 15):
                 self.info.BlinkCount = 0
                 self.info.LinesCount = 0
                 self.info.SaccadeCount = 0

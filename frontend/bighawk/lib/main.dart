@@ -185,6 +185,7 @@ class _StartReadingState extends State<StartReading> {
     late final StreamController<List<Data>> controller;
     controller = StreamController<List<Data>>(
       onListen: () async {
+        // await Future<void>.delayed(const Duration(seconds: 10 ));
         controller.add(DataList);
         var url = Uri.parse('http://localhost:8000/tracker_data.txt');
         while (true) {
@@ -469,7 +470,14 @@ class _StartReadingState extends State<StartReading> {
                     ),
                   ),
                   Text(
-                    'Zone-out Count: ${snapshot.data![snapshot.data!.length - 1].linesRead}',
+                    'Line Count: ${snapshot.data![snapshot.data!.length - 1].linesRead}',
+                    style: GoogleFonts.share(
+                      fontSize: 28.0,
+                      color: const Color.fromARGB(255, 255, 255, 255),
+                    ),
+                  ),
+                  Text(
+                    'Time Elapsed: ${snapshot.data![snapshot.data!.length - 1].timePassed}',
                     style: GoogleFonts.share(
                       fontSize: 28.0,
                       color: const Color.fromARGB(255, 255, 255, 255),
