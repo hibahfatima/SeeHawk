@@ -1,7 +1,7 @@
 ''' Demonstrates how to subscribe to and handle data from gaze and event streams '''
 
 import time
-
+import math
 import adhawkapi
 import adhawkapi.frontend
 from adhawkapi import Events, MarkerSequenceMode, PacketType
@@ -15,9 +15,10 @@ class Info:
         self.TimeNow = 0
         self.VergenceCount = 0
         self.ZoneOutCount = 0
+        self.prevX = 0
         self.ReadingSpeed = 0
         self.LinesCount = 0
-        self.LineSpeed = 0
+        #self.LineSpeed = 0
 
 
 class Frontend:
@@ -88,15 +89,42 @@ class Frontend:
             if (self.info.TimeStartedBool == False):
                 self.info.TimeStarted = timestamp
                 self.info.TimeStartedBool = True
-            print(f'BlinkCount:\t\t{self.info.BlinkCount}\n'
-           f'SaccadeCount:\t\t{self.info.SaccadeCount}\n'
-           #f'Start Time:\t{self.info.TimeStarted}\n'
-           #f'Current Time:\t{timestamp}\n'
-           f'Time passed:\t{timestamp - self.info.TimeStarted }\n')
+            if (vergence > 0.22):
+                self.info.VergenceCount += 1
+            if (self.info.prevX > x_pos + 0.015):
+                self.info.LinesCount += 1
+            self.info.prevX = x_pos
+            blinkcount_string = f'Blink Count:\t\t{self.info.BlinkCount}\n'
+            atten_span_string = f'Attention Span Ratio:\t\t{(self.info.BlinkCount + 1)/(self.info.SaccadeCount + 1)}\n'
+            time_passed_string = f'Time passed:\t\t{(math.floor(timestamp - self.info.TimeStarted))}\n'
+            pages_read_string = f'Pages read:\t\t{self.info.VergenceCount}\n'
+            lines_read_string = f'Lines read:\t\t{self.info.LinesCount}\n'
+            reading_spead_string = f'Reading Speed:\t\t{round(self.info.LinesCount/(timestamp + 0.01  - self.info.TimeStarted), 2)}\n'
+            print(blinkcount_string)
+            print(atten_span_string)
+            print(time_passed_string)
+            print(pages_read_string)
+            print(lines_read_string)
+            print(reading_spead_string)
+            print('\n')
+
+            #open text file
+            text_file = open("tracker_data.txt", "w")
+            
+            #write string to file
+            text_file.write(blinkcount_string + '\n' +
+                            atten_span_string + '\n' +
+                            time_passed_string + '\n' +
+                            pages_read_string + '\n' +
+                            lines_read_string + '\n' +
+                            reading_spead_string)
+            
+            #close file
+            text_file.close()
+
            # )
            ## print(f'Gaze data\n'
                  ## f'Time since connection:\t{timestamp}\n'
-                 ## f'X coordinate:\t\t{x_pos}\n'
                  ##f'Y coordinate:\t\t{y_pos}\n'
                  ## f'Z coordinate:\t\t{z_pos}\n'
                   ##f'Vergence angle:\t\t{vergence}\n'
@@ -109,10 +137,8 @@ class Frontend:
             # We discriminate between events based on their type
             if event_type == Events.BLINK.value:
                 self.info.BlinkCount += 1
-                print('Blink!')
             elif event_type == Events.SACCADE.value:
                 self.info.SaccadeCount += 1
-                print('Saccade!')
 
     def _handle_connect_response(self, error):
         ''' Handler for backend connections '''
