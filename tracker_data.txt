@@ -1,11 +1,8 @@
-Blink Count:		24
-
-Attention Span Ratio:		1.1904761904761905
-
-Time passed:		46
-
-Pages read:		15
-
-Lines read:		18
-
-Reading Speed:		0.39
+0.19762657582759857
+-0.14942696690559387
+77
+0.6964285714285714
+330
+25
+98
+0.3

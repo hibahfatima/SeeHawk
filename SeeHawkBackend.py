@@ -18,6 +18,8 @@ class Info:
         self.prevX = 0
         self.ReadingSpeed = 0
         self.LinesCount = 0
+        self.coolDown = True
+        self.lastPageTurn = 0
         #self.LineSpeed = 0
 
 
@@ -89,35 +91,46 @@ class Frontend:
             if (self.info.TimeStartedBool == False):
                 self.info.TimeStarted = timestamp
                 self.info.TimeStartedBool = True
-            if (vergence > 0.22):
+            if (vergence > 0.35 and ((timestamp - self.info.lastPageTurn) > 5)):
                 self.info.VergenceCount += 1
+                self.info.lastPageTurn = timestamp
             if (self.info.prevX > x_pos + 0.015):
                 self.info.LinesCount += 1
             self.info.prevX = x_pos
-            blinkcount_string = f'Blink Count:\t\t{self.info.BlinkCount}\n'
-            atten_span_string = f'Attention Span Ratio:\t\t{(self.info.BlinkCount + 1)/(self.info.SaccadeCount + 1)}\n'
-            time_passed_string = f'Time passed:\t\t{(math.floor(timestamp - self.info.TimeStarted))}\n'
-            pages_read_string = f'Pages read:\t\t{self.info.VergenceCount}\n'
-            lines_read_string = f'Lines read:\t\t{self.info.LinesCount}\n'
-            reading_spead_string = f'Reading Speed:\t\t{round(self.info.LinesCount/(timestamp + 0.01  - self.info.TimeStarted), 2)}\n'
+            if (timestamp - self.info.TimeStarted < 10):
+                self.info.BlinkCount = 0
+                self.info.LinesCount = 0
+                self.info.SaccadeCount = 0
+                self.info.VergenceCount = 0
+            blinkcount_string = f'Blink Count:\t\t{self.info.BlinkCount}'
+            atten_span_string = f'Attention Span Ratio:\t\t{(self.info.BlinkCount + 1)/(self.info.SaccadeCount + 1)}'
+            time_passed_string = f'Time passed:\t\t{(math.floor(timestamp - self.info.TimeStarted))}'
+            pages_read_string = f'Pages read:\t\t{self.info.VergenceCount}'
+            lines_read_string = f'Lines read:\t\t{self.info.LinesCount}'
+            reading_spead_string = f'Reading Speed:\t\t{round(self.info.LinesCount/(timestamp + 0.01  - self.info.TimeStarted), 2)}'
             print(blinkcount_string)
             print(atten_span_string)
             print(time_passed_string)
             print(pages_read_string)
             print(lines_read_string)
             print(reading_spead_string)
+            print(vergence)
             print('\n')
 
             #open text file
             text_file = open("tracker_data.txt", "w")
             
             #write string to file
-            text_file.write(blinkcount_string + '\n' +
-                            atten_span_string + '\n' +
-                            time_passed_string + '\n' +
-                            pages_read_string + '\n' +
-                            lines_read_string + '\n' +
-                            reading_spead_string)
+            text_file.write(f'{x_pos}' + '\n' +
+            f'{y_pos}' + '\n' +
+                f'{self.info.BlinkCount}' + '\n' +
+                            f'{(self.info.BlinkCount + 1)/(self.info.SaccadeCount + 1)}' +'\n' +
+                            f'{(math.floor(timestamp - self.info.TimeStarted))}' +'\n' +
+                            f'{self.info.VergenceCount}' +'\n' +
+                            f'{self.info.LinesCount}' +'\n' +
+                            f'{round(self.info.LinesCount/(timestamp + 0.01  - self.info.TimeStarted), 2)}')
+
+            # text_file.write(blinkcount_string + atten_span_string + time_passed_string + pages_read_string + lines_read_string + reading_spead_string)
             
             #close file
             text_file.close()
