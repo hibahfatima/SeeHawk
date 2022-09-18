@@ -177,17 +177,37 @@ class StartReading extends StatefulWidget {
 }
 
 class _StartReadingState extends State<StartReading> {
-
-  final Stream<Data> _datas = (() {
-    late final StreamController<Data> controller;
-    controller = StreamController<Data>(
+  static List<Data> DataList = [Data(0, 0, 0, 0, 0, 0, 0, 0)];
+  static List<FlSpot> readSpeedList = [];
+  static List<FlSpot> attentionSpanList = [];
+  static List<FlSpot> timePerPageList = [];
+  final Stream<List<Data>> _datas = (() {
+    late final StreamController<List<Data>> controller;
+    controller = StreamController<List<Data>>(
       onListen: () async {
-        await Future<void>.delayed(const Duration(seconds: 1));
-        try {
-          var url = Uri.parse('http://localhost:3000');
-          var response = await http.get(url);
-        } catch (e) {
-          debugPrint('Error: $e');
+        controller.add(DataList);
+        var url = Uri.parse('http://localhost:8000/tracker_data.txt');
+        while (true) {
+          await Future<void>.delayed(const Duration(milliseconds: 500 ));
+          try {
+            var response = await http.get(url);
+            var data = response.body;
+            LineSplitter ls = LineSplitter();
+            List<String> _datas = ls.convert(data);
+            final bundle = Data(double.parse(_datas[0]), double.parse(_datas[1]), int.parse(_datas[2]), 
+                                double.parse(_datas[3]), double.parse(_datas[4]), int.parse(_datas[5]), 
+                                int.parse(_datas[6]), double.parse(_datas[7]));
+
+            readSpeedList.add(FlSpot(bundle.timePassed, bundle.readingSpeed));
+            attentionSpanList.add(FlSpot(bundle.timePassed, bundle.attentionSpan));
+            timePerPageList.add(FlSpot(bundle.timePassed, bundle.pagesRead / (bundle.timePassed + 1)));
+
+            DataList.add(bundle);
+            controller.add(DataList);
+            debugPrint('${bundle.x} ${bundle.y}');
+          } catch (e) {
+            debugPrint('Error: $e');
+          }
         }
         await controller.close();
       }
@@ -202,7 +222,7 @@ class _StartReadingState extends State<StartReading> {
         backgroundColor: const Color.fromARGB(0, 0, 0, 0),
           elevation: 0,
       ),
-      body: StreamBuilder<Data>(
+      body: StreamBuilder<List<Data>>(
         stream: _datas,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
@@ -236,7 +256,7 @@ class _StartReadingState extends State<StartReading> {
                   Padding(
                     padding: const EdgeInsets.only(left: 50.0, right: 50.0, top: 10.0, bottom: 10.0),
                     child: SizedBox(
-                      height: 150,
+                      height: 120,
                       child: LineChart(
                         LineChartData(
                           minY: 0,
@@ -265,16 +285,7 @@ class _StartReadingState extends State<StartReading> {
                           ),
                           lineBarsData: [
                             LineChartBarData(
-                              spots: [
-                                FlSpot(0, 3),
-                                FlSpot(2.6, 2),
-                                FlSpot(4.9, 5),
-                                FlSpot(6.8, 2.5),
-                                FlSpot(8, 4),
-                                FlSpot(9.5, 3),
-                                FlSpot(11, 4),
-                                FlSpot(12, 6),
-                              ],
+                              spots: readSpeedList,
                               isCurved: true,
                               gradient: const LinearGradient(
                                 begin: Alignment.bottomRight,
@@ -305,17 +316,17 @@ class _StartReadingState extends State<StartReading> {
                   ),
                   Center(
                     child: Text(
-                      'Average Zone-out Time 🥴',
+                      'Attention Span Ratio 🥴',
                       style: GoogleFonts.share(
                         fontSize: 28.0,
                         color: const Color.fromARGB(255, 255, 255, 255),
                       ),
-                    ),
+                    )
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 50.0, right: 50.0, top: 10.0, bottom: 10.0),
                     child: SizedBox(
-                      height: 150,
+                      height: 120,
                       child: LineChart(
                         LineChartData(
                           minY: 0,
@@ -344,15 +355,7 @@ class _StartReadingState extends State<StartReading> {
                           ),
                           lineBarsData: [
                             LineChartBarData(
-                              spots: [
-                                FlSpot(0, 3),
-                                FlSpot(2.6, 2),
-                                FlSpot(4.9, 5),
-                                FlSpot(6.8, 2.5),
-                                FlSpot(8, 4),
-                                FlSpot(9.5, 3),
-                                FlSpot(11, 4),
-                              ],
+                              spots: attentionSpanList,
                               isCurved: true,
                               gradient: const LinearGradient(
                                 begin: Alignment.bottomRight,
@@ -393,7 +396,7 @@ class _StartReadingState extends State<StartReading> {
                   Padding(
                     padding: const EdgeInsets.only(left: 50.0, right: 50.0, top: 10.0, bottom: 10.0),
                     child: SizedBox(
-                      height: 150,
+                      height: 120,
                       child: LineChart(
                         LineChartData(
                           minY: 0,
@@ -422,15 +425,7 @@ class _StartReadingState extends State<StartReading> {
                           ),
                           lineBarsData: [
                             LineChartBarData(
-                              spots: [
-                                FlSpot(0, 3),
-                                FlSpot(2.6, 2),
-                                FlSpot(4.9, 5),
-                                FlSpot(6.8, 2.5),
-                                FlSpot(8, 4),
-                                FlSpot(9.5, 3),
-                                FlSpot(11, 4),
-                              ],
+                              spots: timePerPageList,
                               isCurved: true,
                               gradient: const LinearGradient(
                                 begin: Alignment.bottomRight,
@@ -460,21 +455,21 @@ class _StartReadingState extends State<StartReading> {
                     ),
                   ),
                   Text(
-                    'Lines Read: 28',
+                    'Blink Count: ${snapshot.data![snapshot.data!.length - 1].blinkCount}',
                     style: GoogleFonts.share(
                       fontSize: 28.0,
                       color: const Color.fromARGB(255, 255, 255, 255),
                     ),
                   ),
                   Text(
-                    'Pages Read: 28',
+                    'Pages Read: ${snapshot.data![snapshot.data!.length - 1].pagesRead}',
                     style: GoogleFonts.share(
                       fontSize: 28.0,
                       color: const Color.fromARGB(255, 255, 255, 255),
                     ),
                   ),
                   Text(
-                    'Zone-out Count: 28',
+                    'Zone-out Count: ${snapshot.data![snapshot.data!.length - 1].linesRead}',
                     style: GoogleFonts.share(
                       fontSize: 28.0,
                       color: const Color.fromARGB(255, 255, 255, 255),
