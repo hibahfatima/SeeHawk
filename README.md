@@ -1,4 +1,4 @@
-# SeeHawk
+# SeeHawk (Hack the North 2022 Finalist)
 SeeHawk is a reading performance tracker which analyzes reading patterns and behaviours, presenting dynamic second-by-second updates delivered to your phone through our app.
 
 # Inspiration
