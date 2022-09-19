@@ -23,7 +23,7 @@ We learned that Software Development in teams is best done by communicating effe
 We hope to add more metrics to our app, specifically adding a zone-out tracker which would record the number of times a user "zones out".
 
 # Built With
-flutter
-python
-adhawk backend services
+flutter, 
+python, 
+adhawk backend services, 
 adhawk eye tracking glasses
