@@ -1,7 +1,7 @@
 # SeeHawk
 SeeHawk is a reading performance tracker which analyzes reading patterns and behaviours, presenting dynamic second-by-second updates delivered to your phone through our app.
 
-Inspiration
+##Inspiration
 As avid readers, we wanted a tool to track our reading metrics. As a child, one of us struggled with concentrating and focusing while reading. Specifically, there was a strong tendency to zone out. Our app provides the ability for a user to track their reading metrics and also quantify their progress in improving their reading skills.
 
 What it does
