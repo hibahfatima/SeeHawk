@@ -2,8 +2,9 @@
 SeeHawk is a reading performance tracker which analyzes reading patterns and behaviours, presenting dynamic second-by-second updates delivered to your phone through our app.
 
 # Links:
-🏆 Hack The North 2022 Finalist ($2000 Prize): "https://devpost.com/software/seehawk"
-🎥 App Demo : "https://www.youtube.com/shorts/VVpmvEkzwU0?feature=share"
+🏆 Hack The North 2022 Finalist ($2000 Prize): https://devpost.com/software/seehawk
+
+🎥 App Demo: https://www.youtube.com/shorts/VVpmvEkzwU0?feature=share
 
 # Inspiration
 As avid readers, we wanted a tool to track our reading metrics. As a child, one of us struggled with concentrating and focusing while reading. Specifically, there was a strong tendency to zone out. Our app provides the ability for a user to track their reading metrics and also quantify their progress in improving their reading skills.
